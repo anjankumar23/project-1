@@ -29,9 +29,7 @@ db.exec(`
 `);
 
 const columns = db.prepare('PRAGMA table_info(bookings)').all().map(c => c.name);
-if (!columns.includes('client_id')) {
-  db.exec("ALTER TABLE bookings ADD COLUMN client_id TEXT NOT NULL DEFAULT 'legacy'");
-}
+if (!columns.includes('client_id')) db.exec("ALTER TABLE bookings ADD COLUMN client_id TEXT NOT NULL DEFAULT 'legacy'");
 
 const routes = [
   { from: 'Main Gate', to: 'Tech Market', time: '4–6 min', fare: 20 },
@@ -59,12 +57,10 @@ function getClientId(req) {
 }
 
 app.get('/api/health', (_req, res) => {
-  res.json({ ok: true, service: 'campus-toto-api', timestamp: new Date().toISOString() });
+  res.json({ ok: true, service: 'campus-toto', timestamp: new Date().toISOString() });
 });
 
-app.get('/api/routes', (_req, res) => {
-  res.json({ routes });
-});
+app.get('/api/routes', (_req, res) => res.json({ routes }));
 
 function calculateFare(pickup, dropoff, passengers) {
   const matched = routes.find(r => r.from === pickup && r.to === dropoff);
@@ -91,17 +87,9 @@ app.post('/api/bookings', (req, res) => {
   const driver = drivers[Math.floor(Math.random() * drivers.length)];
   const eta = schedule === 'now' ? Math.floor(2 + Math.random() * 4) : Math.max(5, Number(schedule) + Math.floor(Math.random() * 4));
   const booking = {
-    id: crypto.randomUUID(),
-    client_id: clientId,
-    pickup,
-    dropoff,
-    schedule: String(schedule),
-    passengers: count,
-    fare: calculateFare(pickup, dropoff, count),
-    driver: driver.name,
-    vehicle: driver.vehicle,
-    eta,
-    created_at: new Date().toISOString()
+    id: crypto.randomUUID(), client_id: clientId, pickup, dropoff, schedule: String(schedule),
+    passengers: count, fare: calculateFare(pickup, dropoff, count), driver: driver.name,
+    vehicle: driver.vehicle, eta, created_at: new Date().toISOString()
   };
 
   insertBooking.run(booking);
@@ -132,11 +120,13 @@ app.patch('/api/bookings/:id/cancel', (req, res) => {
   res.json({ booking });
 });
 
+// Serve the installable mobile web app from the same server.
+app.use(express.static(__dirname, { extensions: ['html'] }));
+app.get('/', (_req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+
 app.use((err, _req, res, _next) => {
   console.error(err);
   res.status(500).json({ error: 'Internal server error.' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Campus Toto API running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Campus Toto running on port ${PORT}`));
