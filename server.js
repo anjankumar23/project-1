@@ -14,6 +14,7 @@ db.pragma('journal_mode = WAL');
 db.exec(`
   CREATE TABLE IF NOT EXISTS bookings (
     id TEXT PRIMARY KEY,
+    client_id TEXT NOT NULL,
     pickup TEXT NOT NULL,
     dropoff TEXT NOT NULL,
     schedule TEXT NOT NULL,
@@ -26,6 +27,11 @@ db.exec(`
     created_at TEXT NOT NULL
   );
 `);
+
+const columns = db.prepare('PRAGMA table_info(bookings)').all().map(c => c.name);
+if (!columns.includes('client_id')) {
+  db.exec("ALTER TABLE bookings ADD COLUMN client_id TEXT NOT NULL DEFAULT 'legacy'");
+}
 
 const routes = [
   { from: 'Main Gate', to: 'Tech Market', time: '4–6 min', fare: 20 },
@@ -47,6 +53,11 @@ const drivers = [
 app.use(cors({ origin: true }));
 app.use(express.json());
 
+function getClientId(req) {
+  const value = String(req.get('X-Client-Id') || '').trim();
+  return value && value.length <= 100 ? value : null;
+}
+
 app.get('/api/health', (_req, res) => {
   res.json({ ok: true, service: 'campus-toto-api', timestamp: new Date().toISOString() });
 });
@@ -62,14 +73,16 @@ function calculateFare(pickup, dropoff, passengers) {
 }
 
 const insertBooking = db.prepare(`
-  INSERT INTO bookings (id, pickup, dropoff, schedule, passengers, fare, driver, vehicle, eta, status, created_at)
-  VALUES (@id, @pickup, @dropoff, @schedule, @passengers, @fare, @driver, @vehicle, @eta, 'confirmed', @created_at)
+  INSERT INTO bookings (id, client_id, pickup, dropoff, schedule, passengers, fare, driver, vehicle, eta, status, created_at)
+  VALUES (@id, @client_id, @pickup, @dropoff, @schedule, @passengers, @fare, @driver, @vehicle, @eta, 'confirmed', @created_at)
 `);
 
 app.post('/api/bookings', (req, res) => {
+  const clientId = getClientId(req);
   const { pickup, dropoff, schedule = 'now', passengers = 1 } = req.body || {};
   const count = Number(passengers);
 
+  if (!clientId) return res.status(400).json({ error: 'Missing X-Client-Id header.' });
   if (!pickup || !dropoff) return res.status(400).json({ error: 'Pickup and drop-off are required.' });
   if (pickup === dropoff) return res.status(400).json({ error: 'Pickup and drop-off must be different.' });
   if (!Number.isInteger(count) || count < 1 || count > 6) return res.status(400).json({ error: 'Passengers must be between 1 and 6.' });
@@ -79,6 +92,7 @@ app.post('/api/bookings', (req, res) => {
   const eta = schedule === 'now' ? Math.floor(2 + Math.random() * 4) : Math.max(5, Number(schedule) + Math.floor(Math.random() * 4));
   const booking = {
     id: crypto.randomUUID(),
+    client_id: clientId,
     pickup,
     dropoff,
     schedule: String(schedule),
@@ -94,21 +108,27 @@ app.post('/api/bookings', (req, res) => {
   res.status(201).json({ booking: { ...booking, status: 'confirmed' } });
 });
 
-app.get('/api/bookings', (_req, res) => {
-  const bookings = db.prepare('SELECT * FROM bookings ORDER BY datetime(created_at) DESC LIMIT 50').all();
+app.get('/api/bookings', (req, res) => {
+  const clientId = getClientId(req);
+  if (!clientId) return res.status(400).json({ error: 'Missing X-Client-Id header.' });
+  const bookings = db.prepare('SELECT id, pickup, dropoff, schedule, passengers, fare, driver, vehicle, eta, status, created_at FROM bookings WHERE client_id = ? ORDER BY datetime(created_at) DESC LIMIT 50').all(clientId);
   res.json({ bookings });
 });
 
 app.get('/api/bookings/:id', (req, res) => {
-  const booking = db.prepare('SELECT * FROM bookings WHERE id = ?').get(req.params.id);
+  const clientId = getClientId(req);
+  if (!clientId) return res.status(400).json({ error: 'Missing X-Client-Id header.' });
+  const booking = db.prepare('SELECT id, pickup, dropoff, schedule, passengers, fare, driver, vehicle, eta, status, created_at FROM bookings WHERE id = ? AND client_id = ?').get(req.params.id, clientId);
   if (!booking) return res.status(404).json({ error: 'Booking not found.' });
   res.json({ booking });
 });
 
 app.patch('/api/bookings/:id/cancel', (req, res) => {
-  const result = db.prepare("UPDATE bookings SET status = 'cancelled' WHERE id = ? AND status = 'confirmed'").run(req.params.id);
+  const clientId = getClientId(req);
+  if (!clientId) return res.status(400).json({ error: 'Missing X-Client-Id header.' });
+  const result = db.prepare("UPDATE bookings SET status = 'cancelled' WHERE id = ? AND client_id = ? AND status = 'confirmed'").run(req.params.id, clientId);
   if (!result.changes) return res.status(404).json({ error: 'Active booking not found.' });
-  const booking = db.prepare('SELECT * FROM bookings WHERE id = ?').get(req.params.id);
+  const booking = db.prepare('SELECT id, pickup, dropoff, schedule, passengers, fare, driver, vehicle, eta, status, created_at FROM bookings WHERE id = ? AND client_id = ?').get(req.params.id, clientId);
   res.json({ booking });
 });
 
