@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: campus-toto-api
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_PATH
+        value: /var/data/campus-toto.db
+    disk:
+      name: campus-toto-data
+      mountPath: /var/data
+      sizeGB: 1
