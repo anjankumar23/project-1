@@ -1,0 +1,6 @@
+node_modules/
+.env
+campus-toto.db
+campus-toto.db-shm
+campus-toto.db-wal
+.DS_Store
