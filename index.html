@@ -2,8 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Campus Toto — a fast, student-friendly campus e-rickshaw booking prototype for IIT Kharagpur." />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#f5f2e9" />
+  <meta name="description" content="Campus Toto — a fast, student-friendly campus e-rickshaw booking app." />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
   <title>Campus Toto — KGP Ride Booking</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,15 +16,8 @@
 <body>
   <header class="topbar">
     <div class="container nav-wrap">
-      <a class="brand" href="#home" aria-label="Campus Toto home">
-        <span class="brand-mark">↗</span>
-        <span>Campus<span class="brand-accent">Toto</span></span>
-      </a>
-      <nav class="nav-links" aria-label="Primary navigation">
-        <a href="#book">Book</a>
-        <a href="#routes">Routes</a>
-        <a href="#how">How it works</a>
-      </nav>
+      <a class="brand" href="#home" aria-label="Campus Toto home"><span class="brand-mark">↗</span><span>Campus<span class="brand-accent">Toto</span></span></a>
+      <nav class="nav-links" aria-label="Primary navigation"><a href="#book">Book</a><a href="#routes">Routes</a><a href="#how">How it works</a></nav>
       <button class="ghost-btn" id="historyBtn">My rides <span class="ride-count" id="rideCount">0</span></button>
     </div>
   </header>
@@ -31,170 +27,36 @@
       <div class="hero-copy">
         <div class="eyebrow"><span class="pulse-dot"></span> Campus rides, without the chase</div>
         <h1>Book a Toto.<br><span>Reach class on time.</span></h1>
-        <p>Fast, simple e-rickshaw booking for life inside a big engineering campus. Built as a student-first full-stack prototype for IIT Kharagpur.</p>
-        <div class="hero-actions">
-          <a class="primary-btn" href="#book">Book a ride <span>→</span></a>
-          <a class="text-btn" href="#routes">See popular routes</a>
-        </div>
-        <div class="trust-row">
-          <span>✓ Transparent fare</span>
-          <span>✓ API-backed bookings</span>
-          <span>✓ Student friendly</span>
-        </div>
+        <p>Fast, simple e-rickshaw booking for life inside a big engineering campus. Built as a student-first full-stack app prototype for IIT Kharagpur.</p>
+        <div class="hero-actions"><a class="primary-btn" href="#book">Book a ride <span>→</span></a><a class="text-btn" href="#routes">See popular routes</a></div>
+        <div class="trust-row"><span>✓ Transparent fare</span><span>✓ Saved bookings</span><span>✓ Easy on mobile</span></div>
       </div>
-
-      <div class="hero-card" aria-label="Live campus Toto status">
-        <div class="map-grid"></div>
-        <div class="map-station station-a">Main Gate</div>
-        <div class="map-station station-b">Tech Market</div>
-        <div class="map-station station-c">Nalanda</div>
-        <div class="map-station station-d">RP Hall</div>
-        <div class="route-line"></div>
-        <div class="toto-dot">🛺</div>
-        <div class="live-badge"><span class="pulse-dot"></span> 12 Totos active</div>
-        <div class="eta-card">
-          <div>
-            <small>Average pickup</small>
-            <strong>3–5 min</strong>
-          </div>
-          <div class="eta-divider"></div>
-          <div>
-            <small>From Main Gate</small>
-            <strong>₹20+</strong>
-          </div>
-        </div>
-      </div>
+      <div class="hero-card" aria-label="Campus Toto status"><div class="map-grid"></div><div class="map-station station-a">Main Gate</div><div class="map-station station-b">Tech Market</div><div class="map-station station-c">Nalanda</div><div class="map-station station-d">RP Hall</div><div class="route-line"></div><div class="toto-dot">🛺</div><div class="live-badge"><span class="pulse-dot"></span> 12 Totos active</div><div class="eta-card"><div><small>Average pickup</small><strong>3–5 min</strong></div><div class="eta-divider"></div><div><small>From Main Gate</small><strong>₹20+</strong></div></div></div>
     </section>
 
     <section class="booking-section container" id="book">
-      <div class="section-heading">
-        <div>
-          <div class="eyebrow">01 · BOOK YOUR RIDE</div>
-          <h2>Where are you headed?</h2>
-        </div>
-        <span class="demo-tag">Prototype · No real payment</span>
-      </div>
-
+      <div class="section-heading"><div><div class="eyebrow">01 · BOOK YOUR RIDE</div><h2>Where are you headed?</h2></div><span class="demo-tag">Prototype · No real payment</span></div>
       <form class="booking-card" id="bookingForm">
         <div class="field-grid">
-          <label class="field">
-            <span>Pickup</span>
-            <select id="pickup" required>
-              <option value="Main Gate">Main Gate</option>
-              <option value="Tech Market">Tech Market</option>
-              <option value="Nalanda Complex">Nalanda Complex</option>
-              <option value="Jnan Ghosh Stadium">Jnan Ghosh Stadium</option>
-              <option value="Railway Station">Railway Station</option>
-              <option value="Your Hall">Your Hall</option>
-            </select>
-          </label>
+          <label class="field"><span>Pickup</span><select id="pickup" required><option>Main Gate</option><option>Tech Market</option><option>Nalanda Complex</option><option>Jnan Ghosh Stadium</option><option>Railway Station</option><option>Your Hall</option></select></label>
           <button type="button" class="swap-btn" id="swapBtn" aria-label="Swap pickup and drop">⇄</button>
-          <label class="field">
-            <span>Drop</span>
-            <select id="drop" required>
-              <option value="Tech Market">Tech Market</option>
-              <option value="Nalanda Complex">Nalanda Complex</option>
-              <option value="Jnan Ghosh Stadium">Jnan Ghosh Stadium</option>
-              <option value="Railway Station">Railway Station</option>
-              <option value="Your Hall">Your Hall</option>
-              <option value="Main Gate">Main Gate</option>
-            </select>
-          </label>
-          <label class="field">
-            <span>When</span>
-            <select id="schedule" required>
-              <option value="now">Now</option>
-              <option value="15">In 15 minutes</option>
-              <option value="30">In 30 minutes</option>
-              <option value="60">In 1 hour</option>
-            </select>
-          </label>
+          <label class="field"><span>Drop</span><select id="drop" required><option>Tech Market</option><option>Nalanda Complex</option><option>Jnan Ghosh Stadium</option><option>Railway Station</option><option>Your Hall</option><option>Main Gate</option></select></label>
+          <label class="field"><span>When</span><select id="schedule" required><option value="now">Now</option><option value="15">In 15 minutes</option><option value="30">In 30 minutes</option><option value="60">In 1 hour</option></select></label>
         </div>
-
-        <div class="ride-options">
-          <div>
-            <span class="label">Passengers</span>
-            <div class="stepper">
-              <button type="button" id="minusBtn" aria-label="Decrease passengers">−</button>
-              <strong id="passengerCount">1</strong>
-              <button type="button" id="plusBtn" aria-label="Increase passengers">+</button>
-            </div>
-          </div>
-          <div class="fare-preview">
-            <span>Estimated fare</span>
-            <strong id="fare">₹20</strong>
-            <small id="fareNote">Short campus trip</small>
-          </div>
-          <button class="primary-btn book-btn" type="submit">Find a Toto <span>→</span></button>
-        </div>
+        <div class="ride-options"><div><span class="label">Passengers</span><div class="stepper"><button type="button" id="minusBtn" aria-label="Decrease passengers">−</button><strong id="passengerCount">1</strong><button type="button" id="plusBtn" aria-label="Increase passengers">+</button></div></div><div class="fare-preview"><span>Estimated fare</span><strong id="fare">₹20</strong><small id="fareNote">Short campus trip</small></div><button class="primary-btn book-btn" type="submit">Find a Toto <span>→</span></button></div>
       </form>
-
-      <div class="result-panel hidden" id="resultPanel" aria-live="polite">
-        <div class="result-icon">🛺</div>
-        <div class="result-main">
-          <div class="result-kicker">TOTO FOUND</div>
-          <h3 id="resultTitle">Your ride is on the way</h3>
-          <p id="resultMeta">Driver details will appear here.</p>
-        </div>
-        <div class="result-eta"><span>ETA</span><strong id="resultEta">3 min</strong></div>
-        <button type="button" class="small-btn" id="cancelBtn">Cancel</button>
-      </div>
+      <div class="result-panel hidden" id="resultPanel" aria-live="polite"><div class="result-icon">🛺</div><div class="result-main"><div class="result-kicker">TOTO FOUND</div><h3 id="resultTitle">Your ride is on the way</h3><p id="resultMeta">Driver details will appear here.</p></div><div class="result-eta"><span>ETA</span><strong id="resultEta">3 min</strong></div><button type="button" class="small-btn" id="cancelBtn">Cancel</button></div>
     </section>
 
-    <section class="stats-strip container">
-      <div><strong>4.9/5</strong><span>student experience target</span></div>
-      <div><strong>₹20+</strong><span>prototype campus fare</span></div>
-      <div><strong>&lt; 5 min</strong><span>pickup goal</span></div>
-      <div><strong>24/7</strong><span>booking concept</span></div>
-    </section>
+    <section class="stats-strip container"><div><strong>₹20+</strong><span>prototype campus fare</span></div><div><strong>&lt; 5 min</strong><span>pickup goal</span></div><div><strong>1 tap</strong><span>to repeat a route</span></div><div><strong>24/7</strong><span>booking concept</span></div></section>
 
-    <section class="content-section container" id="routes">
-      <div class="section-heading compact">
-        <div>
-          <div class="eyebrow">02 · POPULAR ROUTES</div>
-          <h2>Common campus hops</h2>
-        </div>
-        <p>Tap a route to load it into the booking form.</p>
-      </div>
-      <div class="route-grid" id="routeGrid"></div>
-    </section>
-
-    <section class="content-section container" id="how">
-      <div class="section-heading compact">
-        <div>
-          <div class="eyebrow">03 · HOW IT WORKS</div>
-          <h2>Designed around a student’s day</h2>
-        </div>
-      </div>
-      <div class="how-grid">
-        <article class="how-card"><span>01</span><h3>Choose pickup & drop</h3><p>Use familiar campus landmarks instead of typing long addresses.</p></article>
-        <article class="how-card"><span>02</span><h3>See fare + ETA</h3><p>Get a simple upfront estimate before committing to the ride.</p></article>
-        <article class="how-card"><span>03</span><h3>Ride & track status</h3><p>Receive a driver, vehicle and pickup ETA in one clean status card.</p></article>
-      </div>
-    </section>
-
-    <section class="cta-band container">
-      <div>
-        <div class="eyebrow">FULL-STACK BUILD</div>
-        <h2>Bookings now have a real backend.</h2>
-        <p>The frontend talks to an Express API, which stores bookings in SQLite. A Render configuration is included for deployment; authentication, live GPS and payments remain production upgrades.</p>
-      </div>
-      <a class="secondary-btn" href="https://github.com/anjankumar23/project-1" target="_blank" rel="noopener">View on GitHub <span>↗</span></a>
-    </section>
+    <section class="content-section container" id="routes"><div class="section-heading compact"><div><div class="eyebrow">02 · POPULAR ROUTES</div><h2>Common campus hops</h2></div><p>Tap a route to load it into the booking form.</p></div><div class="route-grid" id="routeGrid"></div></section>
+    <section class="content-section container" id="how"><div class="section-heading compact"><div><div class="eyebrow">03 · HOW IT WORKS</div><h2>Designed around a student’s day</h2></div></div><div class="how-grid"><article class="how-card"><span>01</span><h3>Choose pickup & drop</h3><p>Use familiar campus landmarks instead of typing long addresses.</p></article><article class="how-card"><span>02</span><h3>See fare + ETA</h3><p>Get a simple upfront estimate before requesting the ride.</p></article><article class="how-card"><span>03</span><h3>Ride & save</h3><p>Your booking is stored by the backend and appears in My Rides.</p></article></div></section>
+    <section class="cta-band container"><div><div class="eyebrow">FULL-STACK APP</div><h2>Simple enough for a 10-second booking.</h2><p>Express API + SQLite backend, responsive mobile UI and installable PWA support. Authentication, live GPS and payments can be added for production.</p></div><a class="secondary-btn" href="https://github.com/anjankumar23/project-1" target="_blank" rel="noopener">View on GitHub <span>↗</span></a></section>
   </main>
 
-  <dialog id="historyDialog" class="history-dialog">
-    <div class="dialog-head"><div><div class="eyebrow">YOUR RIDES</div><h2>Recent bookings</h2></div><button class="icon-btn" id="closeDialog" aria-label="Close">×</button></div>
-    <div id="historyList" class="history-list"></div>
-  </dialog>
-
-  <footer class="footer">
-    <div class="container footer-inner">
-      <span>CampusToto · Student mobility prototype</span>
-      <span>Built for fast campus movement</span>
-    </div>
-  </footer>
-
+  <dialog id="historyDialog" class="history-dialog"><div class="dialog-head"><div><div class="eyebrow">YOUR RIDES</div><h2>Recent bookings</h2></div><button class="icon-btn" id="closeDialog" aria-label="Close">×</button></div><div id="historyList" class="history-list"></div></dialog>
+  <footer class="footer"><div class="container footer-inner"><span>CampusToto · Student mobility prototype</span><span>Built for fast campus movement</span></div></footer>
   <script src="app.js"></script>
 </body>
 </html>
